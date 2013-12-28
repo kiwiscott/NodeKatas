@@ -56,6 +56,8 @@ function Frame(id) {
         return this.rolls;
     }
 
+
+
     this.scoreSpearOrStrike = function (numberOfRollsToFind) {
         if (this.isLastFrame() && this.rolls[2] == notRolledYet) {
             return cannotCalculateScore;

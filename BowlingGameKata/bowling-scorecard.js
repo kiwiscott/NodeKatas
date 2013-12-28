@@ -53,12 +53,11 @@ function ScoreCard() {
             var rowTemplate = '';
             rowTemplate = frame.isLastFrame() ? lastFrameRow : frameRow;
 
-            var lastFrame = frame.isLastFrame();
             var pinsKnockedDownInFrame = frame.pinsKnockedDownInFrame();
 
-            rowTemplate = rowTemplate.replace(/%FIRST%/gi, firstBall(lastFrame, pinsKnockedDownInFrame));
-            rowTemplate = rowTemplate.replace(/%SECOND%/gi, secondBall(lastFrame, pinsKnockedDownInFrame));
-            rowTemplate = rowTemplate.replace(/%THIRD%/gi, thirdBall(lastFrame, pinsKnockedDownInFrame));
+            rowTemplate = rowTemplate.replace(/%FIRST%/gi, valueFor(1, pinsKnockedDownInFrame));
+            rowTemplate = rowTemplate.replace(/%SECOND%/gi, valueFor(2, pinsKnockedDownInFrame));
+            rowTemplate = rowTemplate.replace(/%THIRD%/gi, valueFor(3, pinsKnockedDownInFrame));
             theRow += rowTemplate;
         });
         return theRow;
@@ -76,26 +75,28 @@ function ScoreCard() {
         if (n < 100) return (" " + n);
         return n.toString();
     }
-    function firstBall(lastFrame, pinsKnockedDown) {
-        return lastFrame && pinsKnockedDown[0] == 10 ? 'X'
-            : pinsKnockedDown[0] == 10 ? ' '
-            : pinsKnockedDown[0] == -1 ? ' '
-            : pinsKnockedDown[0].toString();
-    }
-    function secondBall(lastFrame, pinsKnockedDown) {
-        return (!lastFrame && pinsKnockedDown[0] == 10) ? 'X'
-            : (lastFrame && pinsKnockedDown[1] == 10) ? 'X'
+    function valueFor(column, pinsKnockedDown) {
+        value = -1;
+        switch (column) {
+            case 1:
+                value = pinsKnockedDown[0] == 10 && pinsKnockedDown[1] == 0 && pinsKnockedDown[2] == -1 ? -1 : pinsKnockedDown[0];
+                break;
+            case 2:
+                value = (pinsKnockedDown[0] == 10 && pinsKnockedDown[1] == 0 && pinsKnockedDown[2] == -1) ? 10
+                : pinsKnockedDown[1] == 0 ? 0
+                : (pinsKnockedDown[0] + pinsKnockedDown[1] == 10) ? '\/'
+                : pinsKnockedDown[1];
+                break;
+            default:
+                value = pinsKnockedDown[2];
+        }
 
-            : lastFrame && pinsKnockedDown[0] != 10 && (pinsKnockedDown[0] + pinsKnockedDown[1] == 10) ? '/'
-            : !lastFrame && pinsKnockedDown[0] + pinsKnockedDown[1] == 10 ? '/'
-            : pinsKnockedDown[1] == -1 ? ' '
-            : pinsKnockedDown[1].toString();
+        if (value == -1) return ' ';
+        if (value == 0) return '-';
+        if (value == 10) return 'X';
+        return value;
     }
-    function thirdBall(lastFrame, pinsKnockedDown) {
-        return pinsKnockedDown[2] == -1 ? ' '
-            : pinsKnockedDown[2] == 10 ? 'X'
-            : pinsKnockedDown[2].toString();
-    }
+
     function buildRowFromFrames(game, callBack) {
         var theRow = '';
         game.frames.forEach(function (frame, i) { theRow += callBack(frame, i) });

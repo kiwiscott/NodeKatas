@@ -53,12 +53,22 @@ describe('Score Board -Ten Pin Bowling', function () {
         board += footer;
         scorecard.render(b).should.equal(board);
     });
+    
     it('Rolled 10 Strikes Game Not Complete', function () {
         var b = new game();
         rollAll(b, 10, 10);
         var board = header;
         board += '|   |X|   |X|   |X|   |X|   |X|   |X|   |X|   |X|   |X|  X| | |\n';
         board += '|  30 |  60 |  90 | 120 | 150 | 180 | 210 | 240 |     |       |\n';
+        board += footer;
+        scorecard.render(b).should.equal(board);
+    });
+    it('Rolled 10 Zeros Game 0', function () {
+        var b = new game();
+        rollAll(b, 20, 0);
+        var board = header;
+        board += '|  -|-|  -|-|  -|-|  -|-|  -|-|  -|-|  -|-|  -|-|  -|-|  -|-| |\n';
+        board += '|   0 |   0 |   0 |   0 |   0 |   0 |   0 |   0 |   0 |    0  |\n';
         board += footer;
         scorecard.render(b).should.equal(board);
     });
@@ -87,7 +97,7 @@ describe('Score Board -Ten Pin Bowling', function () {
         b.roll(0);
         b.roll(0);
         var board = header;
-        board += '|   |X|   |X|   |X|   |X|   |X|   |X|   |X|   |X|   |X|  X|0|0|\n';
+        board += '|   |X|   |X|   |X|   |X|   |X|   |X|   |X|   |X|   |X|  X|-|-|\n';
         board += '|  30 |  60 |  90 | 120 | 150 | 180 | 210 | 240 | 260 |  270  |\n';
         board += footer;
 
