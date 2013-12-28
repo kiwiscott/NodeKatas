@@ -33,7 +33,7 @@ describe('Score Board -Ten Pin Bowling', function () {
         scorecard.render(b).should.equal(board);
     });
     it('Rolled Three Strikes First Frame Only Should Be Complete', function () {
-        var b = new game();        
+        var b = new game();
         rollAll(b, 3, 10);
         var board = header;
         board += '|   |X|   |X|   |X|   | |   | |   | |   | |   | |   | |   | | |\n';

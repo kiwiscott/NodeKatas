@@ -13,28 +13,30 @@ function ScoreCard() {
 
     var lastFrameFooter = '|_______|';
     var frameFooter = '|_____';
-    
+
     this.header = function (game) {
         return buildRowFromFrames(game,
-            function (frame) {
+            function (frame, index) {
                 var frameHead = frame.isLastFrame() ? lastFrameheader : frameheader;
-                frameHead = frameHead.replace(/%INDEX%/gi, frame.index + 1);
+                frameHead = frameHead.replace(/%INDEX%/gi, index + 1);
                 return frameHead;
             });
     }
 
     this.totalRow = function (game) {
         return buildRowFromFrames(game,
-           function (frame) {
+           function (frame, index) {
                var totalTemplate = frame.isLastFrame() ? lastTotalRow : totalRow;
 
+               scoreAfterFrame = 0;
                var canRender = frame.isComplete();
                if (canRender) {
-                   var scoreAfterFrame = game.scoreAfterFrame(frame.index + 1);
+                   scoreAfterFrame = game.scoreAfterFrame(index + 1);
                    if (scoreAfterFrame == -1) {
                        canRender = false;
                    }
                }
+
 
                totalTemplate = canRender
                    ? totalTemplate.replace(/%TOTAL%/gi, pad3(scoreAfterFrame))
@@ -43,45 +45,20 @@ function ScoreCard() {
            });
     }
 
+
+
     this.frameRows = function (game) {
         var theRow = '';
         game.frames.forEach(function (frame) {
             var rowTemplate = '';
             rowTemplate = frame.isLastFrame() ? lastFrameRow : frameRow;
 
-            if (frame.isLastFrame()) {
+            var lastFrame = frame.isLastFrame();
+            var pinsKnockedDownInFrame = frame.pinsKnockedDownInFrame();
 
-                if (frame.isStrike()) {
-                    rowTemplate = rowTemplate.replace(/%FIRST%/gi, 'X');
-                    rowTemplate = rowTemplate.replace(/%SECOND%/gi, frame.bonusThirdRoll == -1 ? ' ' : frame.bonusThirdRoll === 10 ? 'X' : frame.bonusThirdRoll);
-                    rowTemplate = rowTemplate.replace(/%THIRD%/gi, frame.bonusFourthRoll == -1 ? ' ' : frame.bonusFourthRoll === 10 ? 'X' : frame.bonusFourthRoll);
-                }
-                else if (frame.isSpear()) {
-                    rowTemplate = rowTemplate.replace(/%FIRST%/gi, frame.firstRoll == -1 ? ' ' : frame.firstRoll);
-                    rowTemplate = rowTemplate.replace(/%SECOND%/gi, '/');
-                    rowTemplate = rowTemplate.replace(/%THIRD%/gi, frame.bonusThirdRoll == -1 ? ' ' : frame.bonusThirdRoll == 10 ? 'X' : frame.bonusThirdRoll);
-                }
-                else {
-                    rowTemplate = rowTemplate.replace(/%FIRST%/gi, frame.firstRoll == -1 ? ' ' : frame.firstRoll);
-                    rowTemplate = rowTemplate.replace(/%SECOND%/gi, frame.secondRoll == -1 ? ' ' : frame.secondRoll);
-                    rowTemplate = rowTemplate.replace(/%THIRD%/gi, ' ');
-                }
-            }
-            else {
-                if (frame.isStrike()) {
-                    rowTemplate = rowTemplate.replace(/%FIRST%/gi, ' ');
-                    rowTemplate = rowTemplate.replace(/%SECOND%/gi, 'X');
-                }
-                else if (frame.isSpear()) {
-                    rowTemplate = rowTemplate.replace(/%FIRST%/gi, frame.firstRoll == -1 ? ' ' : frame.firstRoll);
-                    rowTemplate = rowTemplate.replace(/%SECOND%/gi, '/');
-                }
-                else {
-                    rowTemplate = rowTemplate.replace(/%FIRST%/gi, frame.firstRoll == -1 ? ' ' : frame.firstRoll);
-                    rowTemplate = rowTemplate.replace(/%SECOND%/gi, frame.secondRoll == -1 ? ' ' : frame.secondRoll);
-                }
-            }
-
+            rowTemplate = rowTemplate.replace(/%FIRST%/gi, firstBall(lastFrame, pinsKnockedDownInFrame));
+            rowTemplate = rowTemplate.replace(/%SECOND%/gi, secondBall(lastFrame, pinsKnockedDownInFrame));
+            rowTemplate = rowTemplate.replace(/%THIRD%/gi, thirdBall(lastFrame, pinsKnockedDownInFrame));
             theRow += rowTemplate;
         });
         return theRow;
@@ -99,10 +76,29 @@ function ScoreCard() {
         if (n < 100) return (" " + n);
         return n.toString();
     }
+    function firstBall(lastFrame, pinsKnockedDown) {
+        return lastFrame && pinsKnockedDown[0] == 10 ? 'X'
+            : pinsKnockedDown[0] == 10 ? ' '
+            : pinsKnockedDown[0] == -1 ? ' '
+            : pinsKnockedDown[0].toString();
+    }
+    function secondBall(lastFrame, pinsKnockedDown) {
+        return (!lastFrame && pinsKnockedDown[0] == 10) ? 'X'
+            : (lastFrame && pinsKnockedDown[1] == 10) ? 'X'
 
+            : lastFrame && pinsKnockedDown[0] != 10 && (pinsKnockedDown[0] + pinsKnockedDown[1] == 10) ? '/'
+            : !lastFrame && pinsKnockedDown[0] + pinsKnockedDown[1] == 10 ? '/'
+            : pinsKnockedDown[1] == -1 ? ' '
+            : pinsKnockedDown[1].toString();
+    }
+    function thirdBall(lastFrame, pinsKnockedDown) {
+        return pinsKnockedDown[2] == -1 ? ' '
+            : pinsKnockedDown[2] == 10 ? 'X'
+            : pinsKnockedDown[2].toString();
+    }
     function buildRowFromFrames(game, callBack) {
         var theRow = '';
-        game.frames.forEach(function (frame) { theRow += callBack(frame) });
+        game.frames.forEach(function (frame, i) { theRow += callBack(frame, i) });
         return theRow;
     }
 }

@@ -13,27 +13,24 @@ describe('Ten Pin Bowling', function () {
             b.frames.length.should.equal(10);
         });
 
-        it('should return 1 when only 1 pin hit', function () {
+        it('should return -1 when game not complete', function () {
             var b = new game();
             b.roll(1);
             b.roll(0);
-            b.score().should.equal(1);
+            b.score().should.equal(-1);
         })
 
         it('should return 0 when no pins hit', function () {
             var b = new game();
             b.roll(0);
             b.roll(0);
-            b.score().should.equal(0);
+            b.scoreAfterFrame(1).should.equal(0);
         })
         it('Rolling 2 Pins will result in a complete frame', function () {
             var b = new game();
             b.roll(4);
             b.roll(5);
-            var frame = b.frames[0];
-            frame.firstRoll.should.equal(4);
-            frame.secondRoll.should.equal(5);
-            frame.isComplete().should.equal(true);
+            b.scoreAfterFrame(1).should.equal(9);
         });
 
         it('A strike should take the next two rolls append it to the frame score', function () {
@@ -41,26 +38,26 @@ describe('Ten Pin Bowling', function () {
             b.roll(10);
             b.roll(5);
             b.roll(4);
-            b.roll(0); //Must complete the Frame
-            b.score().should.equal(28);
+            b.scoreAfterFrame(1).should.equal(19);
         });
 
         it('A spare should take the next roll and append it to the frame score', function () {
             var b = new game();
             b.roll(9);
             b.roll(1);
-            b.roll(9);
-            b.roll(0); //Must complete the Frame
-            b.score().should.equal(28);
+            b.roll(3);
+            b.scoreAfterFrame(1).should.equal(13);
         });
     })
+
     describe('Games', function () {
-        it('Rolling All Ones should Equal 20', function () {
+        it('All Ones should Equal 20', function () {
             var b = new game();
             rollAll(b, 20, 1);
             b.score().should.equal(20);
         })
-        it('1 strikes should equal 0', function () {
+
+        it('1 strikes should equal -1', function () {
             var b = new game();
             b.roll(10);
             b.score().should.equal(-1);
@@ -71,6 +68,7 @@ describe('Ten Pin Bowling', function () {
             rollAll(b, 12, 10);
             b.score().should.equal(300);
         });
+
         //"9-9-9-9-9-9-9-9-9-9-" (20 rolls: 10 pairs of 9 and miss) = 9 + 9 + 9 + 9 + 9 + 9 + 9 + 9 + 9 + 9 = 90
         it('All 9s then 0s should be 90', function () {
             var b = new game();
