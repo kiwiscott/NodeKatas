@@ -2,7 +2,7 @@ These are simple NodeJS Katas with some minor extensions.
 
 These are just learning code samples.
 
-NOTE : I use Mocha (http://visionmedia.github.io/mocha/) for the unit tests install globally in Node so to run the tests:
+NOTE : I use Mocha (http://mochajs.org/) for the unit tests install globally in Node so to run the tests:
 1. Install node
 2."$ npm install -g mocha"
 3. Browse to a 'kata directory'
@@ -22,9 +22,9 @@ BowlingGameKata
 FizzBuzz Node (http://codingdojo.org/cgi-bin/wiki.pl?KataFizzBuzz)
 I tried to break down the function to ber human readable and create a pattern where a method, or function test, would change for one reason only. Most solutions on the internet aren't really focusing on writing better code so much as solving the problem
 - Write a program that prints the numbers from 1 to 100. 
-- But For multiples of 3 print ìFizzî instead of the number 
-- and for the multiples of five print ìBuzzî. 
-- For numbers which are multiple of both 3 and 5, print ìFizzBuzzî.
+- But For multiples of 3 print ‚ÄúFizz‚Äù instead of the number 
+- and for the multiples of five print ‚ÄúBuzz‚Äù. 
+- For numbers which are multiple of both 3 and 5, print ‚ÄúFizzBuzz‚Äù.
 
 Roman Numerals (http://codingdojo.org/cgi-bin/wiki.pl?KataRomanNumerals)
 I wrote a very simple convertor after watching the video from Corey Haines (http://blog.coreyhaines.com/2012/12/roman-numerals-kata-with-commentary.html). I then added a second function to add the numerals as well.
